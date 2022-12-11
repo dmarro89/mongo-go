@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-go
+  labels:
+    app: mongo-go
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-go
+  template:
+    metadata:
+      labels:
+        app: mongo-go
+    spec:
+      containers:
+        - name: mongo-go
+          image: davidemarro/mongo-go:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
