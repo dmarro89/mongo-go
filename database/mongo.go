@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"log"
 	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,23 +26,27 @@ func New() *MongoDB {
 	return &mongoDB
 }
 
-func (mongoDB *MongoDB) GetConnectionURI() string {
+func NewClient(client *mongo.Client) *MongoDB {
+	mongoDB := MongoDB{client: client}
+	return &mongoDB
+}
+
+func (mongoDB *MongoDB) getConnectionURI() string {
 	return os.Getenv(connectionURI)
 }
 
-func (mongoDB *MongoDB) Connect() error {
+func (mongoDB *MongoDB) Connect(ctx context.Context) error {
 	var err error
-	ctx := context.Background()
 	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().
-		ApplyURI(mongoDB.GetConnectionURI()).
+		ApplyURI(mongoDB.getConnectionURI()).
 		SetServerAPIOptions(serverAPIOptions)
 	mongoDB.client, err = mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	return err
+	return nil
 }
 
 func (mongoDB *MongoDB) Disconnect(ctx context.Context) error {

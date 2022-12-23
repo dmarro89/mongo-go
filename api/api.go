@@ -23,10 +23,10 @@ const (
 )
 
 type UserAPI struct {
-	service *service.UserService
+	service service.Service
 }
 
-func New(service *service.UserService) API {
+func New(service service.Service) API {
 	return &UserAPI{service: service}
 }
 
@@ -45,7 +45,7 @@ func (api *UserAPI) Create() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{errorStr: err.Error()})
 			return
 		}
-		c.String(http.StatusOK, "User created")
+		c.String(http.StatusCreated, "User created")
 	}
 
 	return gin.HandlerFunc(fn)

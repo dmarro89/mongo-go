@@ -17,11 +17,23 @@ const (
 	id      = "id"
 )
 
+type Service interface {
+	Ping(ctx context.Context) error
+	Insert(ctx context.Context, user models.User) error
+	Update(ctx context.Context, user models.User) error
+	GetByID(ctx context.Context, userId string) (*models.User, error)
+	Get(ctx context.Context) ([]models.User, error)
+	DeleteByID(ctx context.Context, userId string) error
+}
+
 type UserService struct {
 	mongoDB *database.MongoDB
 }
 
-func New(mongoDB *database.MongoDB) *UserService {
+func New(mongoDB *database.MongoDB) Service {
+	if mongoDB == nil {
+		panic(database.ErrClientNotInitialized)
+	}
 	return &UserService{mongoDB: mongoDB}
 }
 

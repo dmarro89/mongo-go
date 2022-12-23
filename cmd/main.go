@@ -6,22 +6,23 @@ import (
 	"mongo-go/api"
 	"mongo-go/database"
 	"mongo-go/service"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	ready  = "/ready"
-	health = "/health"
-	user   = "user"
-	users  = "users"
+	userEndpoint  = "user"
+	usersEndpoint = "users"
 )
 
-var userId = fmt.Sprintf("%s/:userId", user)
+var userId = fmt.Sprintf("%s/:userId", userEndpoint)
 
 func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*3))
+	defer cancel()
 	mongoDB := database.New()
-	err := mongoDB.Connect()
+	err := mongoDB.Connect(ctx)
 	if err != nil {
 		panic(fmt.Sprintf("Impossible to start Microservice without DB Connection - %v", err))
 	}
@@ -29,13 +30,13 @@ func main() {
 	r := gin.Default()
 
 	api := api.New(service.New(mongoDB))
-	r.POST(user, api.Create())
-	r.PUT(user, api.Update())
+	r.POST(userEndpoint, api.Create())
+	r.PUT(userEndpoint, api.Update())
 	r.DELETE(userId, api.DeleteByID())
-	r.GET(users, api.Get())
+	r.GET(usersEndpoint, api.Get())
 	r.GET(userId, api.GetByID())
 
-	defer mongoDB.Disconnect(context.Background())
+	defer mongoDB.Disconnect(ctx)
 	err = r.Run()
 	if err != nil {
 		panic(fmt.Sprintf("Unexpected error during microservice run - %v", err))

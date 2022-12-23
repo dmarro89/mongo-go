@@ -61,8 +61,8 @@ kubectl apply -f deployment.yaml -n <your_namespace>
 kubectl apply -f service.yaml -n <your_namespace>
 ```
 ## Rest API
-- POST http://localhost:8080/user -> {"name":"Davide", "surname":"Marro", "email":"davide@marro.it"}
-- PUT http://localhost:8080/user -> {"id": "000000000000000","name":"Davide", "surname":"Marro", "email":"davidemarro@marro.it"}
+- POST http://localhost:8080/user -> {"name":"Davide", "surname":"Test", "email":"davide@test.it"}
+- PUT http://localhost:8080/user -> {"id": "000000000000000","name":"Raffaele", "surname":"Test", "email":"raffaele@test.it"}
 - GET http://localhost:8080/user/:userId
 - DELETE http://localhost:8080/user/:userId
 - GET http://localhost:8080/users
